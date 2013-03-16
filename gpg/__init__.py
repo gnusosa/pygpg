@@ -64,14 +64,14 @@ def sign(txt,key):
 	gpg.stdin.close()
 	return gpg.stdout.read().strip()
 
-def verify(sign,signed_stream='',signed_file_name=''):
+def verify(sign,signed_stream='',signed_file_name='',userid=''):
 	if signed_file_name and signed_stream:
 		return False
 	if signed_stream:
 		f,signed_file_name=mkstemp(prefix='pygpg-tmp-')
 		f.write(signed_stream)
 		f.close()
-	gpg=Popen(split('%s -q --batch --no-tty -a -o - --verify - %s'%(GPG_CMD,signed_file_name)), shell=False, stdin=PIPE, stdout=PIPE, stderr=PIPE)
+	gpg=Popen(split('%s -q --no-tty -a -o - --verify - %s'%(GPG_CMD,signed_file_name)), shell=False, stdin=PIPE, stdout=PIPE, stderr=PIPE)
 	gpg.stderr.close()
 	gpg.stdin.write(sign)
 	gpg.stdin.close()
@@ -79,8 +79,14 @@ def verify(sign,signed_stream='',signed_file_name=''):
 	if signed_stream:
 		unlink(signed_file_name)
 	if ret==0:
+		if userid:
+			out=gpg.stdout.read()
+			gpg.stdout.close()
+			if out.find(userid)==-1:
+				return False
 		return True
 	else:
+		gpg.stdout.close()
 		return False
 
 def export_public_key(key):
