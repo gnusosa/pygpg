@@ -62,12 +62,10 @@ def sign(txt,key):
 	gpg.stdin.close()
 	return gpg.stdout.read().strip()
 
-def verify(sign,signed_file_name=''):
-	if signed_file_name:
-		signed_file_name=' '+signed_file_name
-	gpg=Popen(split('%s -q -u %s --batch --no-tty -a -o - --verify -%s'%(GPG_CMD,signed_file_name)), shell=False, stdin=PIPE, stdout=PIPE, stderr=PIPE)
+def verify(sign,signed_stream='',signed_file_name=''):
+	gpg=Popen(split('%s -q --batch --no-tty -a -o - --verify - %s'%(GPG_CMD,signed_file_name)), shell=False, stdin=PIPE, stdout=PIPE, stderr=PIPE)
 	gpg.stderr.close()
-	gpg.stdin.write(txt)
+	gpg.stdin.write(sign)
 	gpg.stdin.close()
 	ret=gpg.wait()
 	if ret==0:
