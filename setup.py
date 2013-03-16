@@ -4,7 +4,7 @@ with open('README.rst') as file:
     long_description = file.read()
 
 setup(name='pygpg',
-      version='1.0',
+      version='1.1',
       description='GnuPG python wrapper.',
       author='Faust',
       author_email='https://www.abnorm.org/contact/',
