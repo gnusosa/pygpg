@@ -68,7 +68,6 @@ def verify(sign,signed_stream='',signed_file_name='',userid=''):
 	if signed_file_name and signed_stream:
 		return False
 	if signed_stream:
-		import pdb; pdb.set_trace()
 		f,signed_file_name=mkstemp(prefix='pygpg-tmp-')
 		f=fdopen(f,'w')
 		f.write(signed_stream)
