@@ -73,7 +73,7 @@ def verify(sign,signed_stream='',signed_file_name='',userid=''):
 		f.write(signed_stream)
 		f.close()
 	gpg=Popen(split('%s -q --no-tty -a -o - --verify - %s'%(GPG_CMD,signed_file_name)), shell=False, stdin=PIPE, stdout=PIPE, stderr=PIPE)
-	gpg.stderr.close()
+	gpg.stdout.close()
 	gpg.stdin.write(sign)
 	gpg.stdin.close()
 	ret=gpg.wait()
@@ -81,13 +81,13 @@ def verify(sign,signed_stream='',signed_file_name='',userid=''):
 		unlink(signed_file_name)
 	if ret==0:
 		if userid:
-			out=gpg.stdout.read()
-			gpg.stdout.close()
+			out=gpg.stderr.read()
+			gpg.stderr.close()
 			if out.find(userid)==-1:
 				return False
 		return True
 	else:
-		gpg.stdout.close()
+		gpg.stderr.close()
 		return False
 
 def export_public_key(key):
