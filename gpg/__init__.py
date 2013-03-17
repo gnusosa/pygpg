@@ -17,7 +17,7 @@
 from shlex import split
 from subprocess import Popen,PIPE
 from tempfile import mkstemp
-from os import unlink
+from os import unlink,fdopen
 
 GPG_CMD='gpg'
 
@@ -68,7 +68,9 @@ def verify(sign,signed_stream='',signed_file_name='',userid=''):
 	if signed_file_name and signed_stream:
 		return False
 	if signed_stream:
+		import pdb; pdb.set_trace()
 		f,signed_file_name=mkstemp(prefix='pygpg-tmp-')
+		f=fdopen(f,'w')
 		f.write(signed_stream)
 		f.close()
 	gpg=Popen(split('%s -q --no-tty -a -o - --verify - %s'%(GPG_CMD,signed_file_name)), shell=False, stdin=PIPE, stdout=PIPE, stderr=PIPE)
